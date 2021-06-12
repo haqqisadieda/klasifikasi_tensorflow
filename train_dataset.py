@@ -1,17 +1,15 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import os
-import PIL
+import pathlib
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-import pathlib
-
 BASE_DIR = BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+data_model = BASE_DIR + "/model"
 dataset_dir = BASE_DIR + "/dataset"
 data_dir = pathlib.Path(dataset_dir)
 
@@ -162,23 +160,9 @@ plt.plot(epochs_range, loss, label='Training Loss')
 plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
-plt.show()  
+plt.show()
 
-img_pred_dir = BASE_DIR + '/prediction/dandelion.jpg'
+if not os.path.exists(data_model):
+  os.makedirs(data_model)
 
-img_pred = keras.preprocessing.image.load_img(
-    img_pred_dir, target_size=(size, size)
-)
-
-img_pred_array = keras.preprocessing.image.img_to_array(img_pred)
-img_pred_array = tf.expand_dims(img_pred_array, 0)
-
-prediction = model.predict(img_pred_array)
-score = tf.nn.softmax(prediction[0])
-
-print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence."
-    .format(class_names[np.argmax(score)], 100 * np.max(score))
-)
-
-
+model.save(data_model, overwrite=True)
